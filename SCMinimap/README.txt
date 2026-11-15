@@ -1,4 +1,4 @@
-SCMINIMAP 1.6.14.1
+SCMINIMAP 1.6.15.0
 Target: Warcraft Forever, interface 16001
 
 INSTALL
@@ -8,7 +8,10 @@ INSTALL
 4. Enable SCMinimap in the AddOns list.
 
 FEATURES
-- Square minimap with a matching one-pixel gray border.
+- Square minimap with a one-pixel adaptive day/night border.
+- Recolors the one-pixel border from fire amber (#FF6A1A) during server-time
+  daylight (07:00-18:59) to shadow indigo (#373A55) at night (19:00-06:59),
+  checking only once per minute.
 - Uses the Classic-safe square minimap mask, reports a square minimap shape, and
   reapplies terrain setup when indoor/cave zoom levels change.
 - Continuously suppresses Blizzard's circular border/backdrop and fixed north marker.

@@ -6,12 +6,14 @@ local calendarControl
 local rightEdgeDayNightFrames = {}
 local suppressedObjects = setmetatable({}, {__mode = "k"})
 local rightEdgeFramesDiscovered = false
-local initialized, elapsed, scanElapsed = false, 0, 0
+local initialized, elapsed, scanElapsed, borderElapsed = false, 0, 0, 0
 local buttonRecords = {}
 local unpackPoint = unpack or table.unpack
 local HEADER_RIGHT_TEXTURE_INSET = 3
 local SQUARE_MASK_TEXTURE = "Interface\\ChatFrame\\ChatFrameBackground"
 local COMPASS_DIRECTIONS = {"N", "NW", "W", "SW", "S", "SE", "E", "NE"}
+local DAY_BORDER_COLOR = {1, 0.415686, 0.101961}
+local NIGHT_BORDER_COLOR = {0.215686, 0.227451, 0.333333}
 
 local addonButtonNamePatterns = {
     "^LibDBIcon10_",
@@ -56,6 +58,17 @@ end
 
 local function updateZone()
     if zoneText then zoneText:SetText("") end
+end
+
+local function updateBorderTheme()
+    if not (holder and holder.SetBackdropBorderColor) then return end
+    local hour
+    if GetGameTime then
+        local ok, value = pcall(GetGameTime)
+        if ok and public(value) and type(value) == "number" then hour = value end
+    end
+    local color = hour and hour >= 7 and hour < 19 and DAY_BORDER_COLOR or NIGHT_BORDER_COLOR
+    holder:SetBackdropBorderColor(color[1], color[2], color[3], 1)
 end
 
 local function updateCoordinates()
@@ -984,6 +997,7 @@ local function initialize()
     SLASH_SCMINIMAP1 = "/scminimap"
 
     applyLayout()
+    updateBorderTheme()
     updateDragCapture()
     updateZone()
     updateCoordinates()
@@ -1015,6 +1029,7 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
         placeBuiltInControls()
         placeHeaderControls()
         if event == "PLAYER_ENTERING_WORLD" then suppressRightEdgeSun(true) end
+        updateBorderTheme()
         updateZone()
         updateCoordinates()
         hideDuplicateCoordinates(MinimapCluster, 1)
@@ -1034,5 +1049,10 @@ eventFrame:SetScript("OnUpdate", function(_, delta)
         scanElapsed = 0
         placeHeaderControls()
         scanButtons()
+    end
+    borderElapsed = borderElapsed + delta
+    if borderElapsed >= 60 then
+        borderElapsed = 0
+        updateBorderTheme()
     end
 end)
