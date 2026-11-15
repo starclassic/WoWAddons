@@ -4,6 +4,7 @@ local db, holder, overlay, dragOverlay, zoneText, coordinatesPanel, coordinatesT
 local buttonLauncher, buttonTray, buttonCountText, emptyButtonsText, buttonKeeper, clockPanel, mailControl
 local calendarControl
 local rightEdgeDayNightFrames = {}
+local suppressedObjects = setmetatable({}, {__mode = "k"})
 local initialized, elapsed, scanElapsed = false, 0, 0
 local buttonRecords = {}
 local unpackPoint = unpack or table.unpack
@@ -123,16 +124,16 @@ end
 
 local function hideObject(object)
     if not object then return end
-    if object.Hide then object:Hide() end
-    if object.SetAlpha then object:SetAlpha(0) end
+    if object.Hide then pcall(object.Hide, object) end
+    if object.SetAlpha then pcall(object.SetAlpha, object, 0) end
 end
 
 local function suppressObject(object)
     if not object then return end
     hideObject(object)
-    if object.HookScript and not object.__scMinimapSuppressed then
-        object.__scMinimapSuppressed = true
-        object:HookScript("OnShow", function(self) hideObject(self) end)
+    if object.HookScript and not suppressedObjects[object] then
+        local hooked = pcall(object.HookScript, object, "OnShow", function(self) hideObject(self) end)
+        if hooked then suppressedObjects[object] = true end
     end
 end
 
@@ -420,18 +421,29 @@ local function suppressRightEdgeSun()
     repeat
         frame = EnumerateFrames(frame)
         if frame and not excluded[frame] and frame.GetCenter and frame.GetWidth and frame.GetHeight then
-            local name = frame.GetName and frame:GetName()
-            local namedTooltip = type(name) == "string" and name:lower():find("tooltip", 1, true) ~= nil
+            local okName, name = true, nil
+            if frame.GetName then okName, name = pcall(frame.GetName, frame) end
+            local namedTooltip = okName and public(name) and type(name) == "string"
+                and name:lower():find("tooltip", 1, true) ~= nil
             local okType, gameTooltipType = false, false
             if frame.IsObjectType then okType, gameTooltipType = pcall(frame.IsObjectType, frame, "GameTooltip") end
-            local shown = not frame.IsShown or frame:IsShown()
-            local protected = frame.IsProtected and frame:IsProtected()
-            local forbidden = frame.IsForbidden and frame:IsForbidden()
-            if shown and not protected and not forbidden and not namedTooltip and not (okType and gameTooltipType) then
+            local okShown, shown = true, true
+            if frame.IsShown then okShown, shown = pcall(frame.IsShown, frame) end
+            local okProtected, protected = true, false
+            if frame.IsProtected then okProtected, protected = pcall(frame.IsProtected, frame) end
+            local okForbidden, forbidden = true, false
+            if frame.IsForbidden then okForbidden, forbidden = pcall(frame.IsForbidden, frame) end
+            local isShown = okShown and public(shown) and shown == true
+            local isProtected = not okProtected or not public(protected) or protected == true
+            local isForbidden = not okForbidden or not public(forbidden) or forbidden == true
+            local isGameTooltip = okType and public(gameTooltipType) and gameTooltipType == true
+            if okName and public(name) and isShown and not isProtected and not isForbidden
+                and not namedTooltip and not isGameTooltip then
                 local okCenter, x, y = pcall(frame.GetCenter, frame)
                 local okWidth, width = pcall(frame.GetWidth, frame)
                 local okHeight, height = pcall(frame.GetHeight, frame)
                 if okCenter and okWidth and okHeight and public(x) and public(y)
+                    and public(width) and public(height)
                     and type(x) == "number" and type(y) == "number"
                     and type(width) == "number" and type(height) == "number"
                     and width >= 16 and width <= 50 and height >= 16 and height <= 50
