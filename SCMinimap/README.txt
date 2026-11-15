@@ -1,4 +1,4 @@
-SCMINIMAP 1.6.14.0
+SCMINIMAP 1.6.14.1
 Target: Warcraft Forever, interface 16001
 
 INSTALL
@@ -35,8 +35,9 @@ FEATURES
   upper-right day/night slot when the client provides no usable frame identity.
 - Safely skips forbidden Blizzard frames and secret values during structural
   sun/moon scans, preventing the scan from flooding the Lua error counter.
-- Runs the global structural frame discovery once during initialization, then
-  reuses cached matches instead of rescanning the entire UI every two seconds.
+- Runs the global structural frame discovery once after entering the world, when
+  Forever's day/night frame exists, then reuses cached matches instead of
+  rescanning the entire UI every two seconds.
 - Keeps collected launchers on DIALOG strata so GameTooltip renders above them.
 - Excludes all tooltip frames from structural day/night detection.
 - Opens the addon tray upward when space permits, otherwise downward, and clamps

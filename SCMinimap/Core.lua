@@ -984,7 +984,6 @@ local function initialize()
     SLASH_SCMINIMAP1 = "/scminimap"
 
     applyLayout()
-    suppressRightEdgeSun(true)
     updateDragCapture()
     updateZone()
     updateCoordinates()
@@ -1015,6 +1014,7 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
         hideDefaultArtwork()
         placeBuiltInControls()
         placeHeaderControls()
+        if event == "PLAYER_ENTERING_WORLD" then suppressRightEdgeSun(true) end
         updateZone()
         updateCoordinates()
         hideDuplicateCoordinates(MinimapCluster, 1)
