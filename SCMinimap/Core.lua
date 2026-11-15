@@ -5,6 +5,7 @@ local buttonLauncher, buttonTray, buttonCountText, emptyButtonsText, buttonKeepe
 local calendarControl
 local rightEdgeDayNightFrames = {}
 local suppressedObjects = setmetatable({}, {__mode = "k"})
+local rightEdgeFramesDiscovered = false
 local initialized, elapsed, scanElapsed = false, 0, 0
 local buttonRecords = {}
 local unpackPoint = unpack or table.unpack
@@ -400,9 +401,11 @@ local function placeBuiltInControls()
     hideObject(_G.AddonCompartmentFrame)
 end
 
-local function suppressRightEdgeSun()
+local function suppressRightEdgeSun(discoverFrames)
     for frame in pairs(rightEdgeDayNightFrames) do suppressObject(frame) end
+    if not discoverFrames or rightEdgeFramesDiscovered then return end
     if not (EnumerateFrames and holder and holder.GetRight and holder.GetTop) then return end
+    rightEdgeFramesDiscovered = true
     local right, top = holder:GetRight(), holder:GetTop()
     if not (public(right) and public(top) and type(right) == "number" and type(top) == "number") then return end
 
@@ -981,6 +984,7 @@ local function initialize()
     SLASH_SCMINIMAP1 = "/scminimap"
 
     applyLayout()
+    suppressRightEdgeSun(true)
     updateDragCapture()
     updateZone()
     updateCoordinates()
@@ -1028,8 +1032,6 @@ eventFrame:SetScript("OnUpdate", function(_, delta)
     scanElapsed = scanElapsed + delta
     if scanElapsed >= 2 then
         scanElapsed = 0
-        hideDefaultArtwork()
-        placeBuiltInControls()
         placeHeaderControls()
         scanButtons()
     end
