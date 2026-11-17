@@ -6,6 +6,7 @@ local calendarControl
 local rightEdgeDayNightFrames = {}
 local suppressedObjects = setmetatable({}, {__mode = "k"})
 local rightEdgeFramesDiscovered = false
+local rightEdgeDiscoveryElapsed
 local initialized, elapsed, scanElapsed = false, 0, 0
 local buttonRecords = {}
 local unpackPoint = unpack or table.unpack
@@ -1014,7 +1015,7 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
         hideDefaultArtwork()
         placeBuiltInControls()
         placeHeaderControls()
-        if event == "PLAYER_ENTERING_WORLD" then suppressRightEdgeSun(true) end
+        if event == "PLAYER_ENTERING_WORLD" then rightEdgeDiscoveryElapsed = 0 end
         updateZone()
         updateCoordinates()
         hideDuplicateCoordinates(MinimapCluster, 1)
@@ -1023,6 +1024,13 @@ end)
 
 eventFrame:SetScript("OnUpdate", function(_, delta)
     if not initialized then return end
+    if rightEdgeDiscoveryElapsed then
+        rightEdgeDiscoveryElapsed = rightEdgeDiscoveryElapsed + delta
+        if rightEdgeDiscoveryElapsed >= 2 then
+            rightEdgeDiscoveryElapsed = nil
+            suppressRightEdgeSun(true)
+        end
+    end
     elapsed = elapsed + delta
     if elapsed >= 0.25 then
         elapsed = 0

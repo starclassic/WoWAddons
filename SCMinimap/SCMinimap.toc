@@ -2,7 +2,7 @@
 ## Title: SCMinimap
 ## Notes: Clean square minimap for Warcraft Forever.
 ## Author: Starclassics UI
-## Version: 1.6.14.1
+## Version: 1.6.14.2
 ## SavedVariables: SCMinimapDB
 ## IconTexture: Interface\Icons\INV_Misc_Map_01
 Core.lua
