@@ -1,9 +1,8 @@
 ## Interface: 16001
 ## Title: SCSeal
-## Notes: Paladin seal duration bar for Warcraft Forever.
+## Notes: One seal icon with native duration border, Echo count, and glowing swap reminder.
 ## Author: Starclassics UI
-## Version: 1.1.4
+## Version: 2.0.0
 ## SavedVariablesPerCharacter: SCSealDB, StarclassicsSealTimerDB
 ## IconTexture: Interface\Icons\Spell_Holy_RighteousnessAura
-Core.lua
-Display.lua
+SCSeal.lua
