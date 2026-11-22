@@ -1,0 +1,22 @@
+SCSeal
+
+The native AuraContainer setup and numeric application formatter approach were
+adapted from Unsealed Wrath Tracker 4.1.7 by KING (MIT), specifically Native.lua.
+The display was reduced to a three-stack next-seal text/icon prompt. No audio,
+art files, minimap code, or options panel from that addon are distributed here.
+Glow.tga is an original procedurally generated gold border and halo texture.
+Source: https://www.curseforge.com/wow/addons/unsealed-wrath-tracker
+Copyright (c) 2026 KING. Full MIT terms are in LICENSE.txt.
+
+Seal rank spell IDs were taken from that project's published rank table,
+credited there to talentsforever.com, via Pally Seal Cooldowns by Colby.
+Source: https://talentsforever.com/data.json
+License: Creative Commons Attribution 4.0 International:
+https://creativecommons.org/licenses/by/4.0/
+Changes: only the cast-recognition IDs and two Echo IDs are retained; the
+rank table is organized for a Command/Righteousness reminder. Echo IDs are
+the defaults published in Unsealed Wrath Tracker 4.1.7.
+No endorsement by these authors or Blizzard is implied.
+
+Blizzard owns the game icons. They are referenced from the installed client
+and are not included in this distribution.
